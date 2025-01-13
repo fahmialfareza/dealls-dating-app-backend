@@ -43,5 +43,6 @@ func StartHTTPServer(newRelic *newrelic.NewRelic, usecase usecase.IUsecase) {
 		}
 	}
 
-	router.Run(fmt.Sprintf(":%s", environment.Port))
+	port := fmt.Sprintf(":%s", environment.Port)
+	router.Run(port)
 }

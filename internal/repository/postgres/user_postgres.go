@@ -9,6 +9,7 @@ import (
 	"github.com/fahmialfareza/deals-dating-app-backend/internal/domain"
 	"github.com/fahmialfareza/deals-dating-app-backend/pkg/converter"
 	"github.com/fahmialfareza/deals-dating-app-backend/pkg/logger"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -24,12 +25,17 @@ func (u *PostgresRepository) UpsertUser(ctx context.Context, data *domain.User) 
 
 	if err := hystrix.DoC(ctx, constant.HystrixPostgres, func(ctx context.Context) error {
 		// generate the password with bcrypt
-		data.Password, err = converter.HashPassword(ctx, data.Password)
+		hashedPassword, err := converter.HashPassword(ctx, data.Password)
 		if err != nil {
 			logger.PrintErrorLog(ctx, err, logger.GetErrorFileLine(), map[string]interface{}{
 				"data": data,
 			})
 			return err
+		}
+
+		// check the existing password is same or not
+		if err = bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(data.Password)); err == nil {
+			data.Password = hashedPassword
 		}
 
 		// create user

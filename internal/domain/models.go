@@ -14,7 +14,7 @@ type User struct {
 
 	Name      string `json:"name"`
 	Email     string `json:"email" gorm:"unique"`
-	Password  string `json:"-"`
+	Password  string `json:"password"`
 	IsPremium bool   `json:"is_premium" gorm:"default:false"`
 
 	// Profile
@@ -44,7 +44,7 @@ type Swipe struct {
 	SwiperID uint      `json:"swiper_id" gorm:"index:swipe_unique_idx,unique"`
 	SwipedID uint      `json:"swiped_id" gorm:"index:swipe_unique_idx,unique"`
 	Type     string    `json:"type" gorm:"size:10;check:type IN ('like','pass')"`
-	Date     time.Time `json:"date" gorm:"type:date" gorm:"index:swipe_unique_idx,unique"`
+	Date     time.Time `json:"date" gorm:"type:date;index:swipe_unique_idx,unique"`
 
 	// Belongs to
 	Swiper User `gorm:"foreignKey:SwiperID"`

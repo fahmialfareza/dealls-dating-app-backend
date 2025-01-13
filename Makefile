@@ -1,5 +1,11 @@
 .PHONY: run-http generate-mocks test coverage force
 
+lint:
+	@go mod vendor
+	@echo "Running golang lint"
+	@golangci-lint run 
+	@rm -rf vendor
+
 run-http:
 	@echo "Running http server..."
 	@go run cmd/main.go http

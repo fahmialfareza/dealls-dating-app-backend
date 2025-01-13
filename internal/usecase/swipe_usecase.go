@@ -11,12 +11,12 @@ import (
 )
 
 type ISwipeUsecase interface {
-	GetSwipe(ctx context.Context, swiperID uint) (domain.User, error)
+	GetSwipe(ctx context.Context, swiperID uint) (domain.GetProfileResponse, error)
 	Swipe(ctx context.Context, swiperID uint, swipedID uint, swipeType string) error
 }
 
 // GetSwipe implements IUsecase.
-func (u *Usecase) GetSwipe(ctx context.Context, swiperID uint) (result domain.User, err error) {
+func (u *Usecase) GetSwipe(ctx context.Context, swiperID uint) (result domain.GetProfileResponse, err error) {
 	segment := logger.StartSegment(ctx, "Usecase.GetSwipe")
 	defer segment.End()
 
@@ -52,12 +52,23 @@ func (u *Usecase) GetSwipe(ctx context.Context, swiperID uint) (result domain.Us
 	randomizeProfile := generator.RandomizeUint(ctx, profileIDs)
 
 	// get the random profile
-	result, err = u.repository.GetUserDetail(ctx, &randomizeProfile, nil)
+	user, err := u.repository.GetUserDetail(ctx, &randomizeProfile, nil)
 	if err != nil {
 		logger.PrintErrorLog(ctx, err, logger.GetErrorFileLine(), map[string]interface{}{
 			"swiper_id": swiperID,
 		})
 		return result, err
+	}
+
+	result = domain.GetProfileResponse{
+		ID:        user.ID,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
+		DeletedAt: user.DeletedAt,
+		Name:      user.Name,
+		Email:     user.Email,
+		IsPremium: user.IsPremium,
+		Profile:   user.Profile,
 	}
 
 	return result, nil
@@ -126,7 +137,7 @@ func (u *Usecase) validateSwipe(ctx context.Context, swiperID uint, date time.Ti
 		})
 		return swipes, err
 	}
-	if len(swipes) >= 10 && swiper.IsPremium == false {
+	if len(swipes) >= 10 && !swiper.IsPremium {
 		err := constant.YouNeedToBePremiumMember
 		logger.PrintErrorLog(ctx, err, logger.GetErrorFileLine(), map[string]interface{}{
 			"swiper_id": swiperID,

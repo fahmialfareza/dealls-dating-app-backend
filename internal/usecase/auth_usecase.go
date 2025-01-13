@@ -14,7 +14,7 @@ import (
 type IUserUsecase interface {
 	Register(ctx context.Context, data domain.RegisterRequest) (domain.LoginResponse, error)
 	Login(ctx context.Context, email, password string) (domain.LoginResponse, error)
-	GetProfile(ctx context.Context, id uint) (domain.User, error)
+	GetProfile(ctx context.Context, id uint) (domain.GetProfileResponse, error)
 	CheckToken(ctx context.Context, token string) (uint, error)
 }
 
@@ -104,20 +104,31 @@ func (u *Usecase) Login(ctx context.Context, email, password string) (result dom
 }
 
 // GetProfile implements IUsecase.
-func (u *Usecase) GetProfile(ctx context.Context, id uint) (domain.User, error) {
+func (u *Usecase) GetProfile(ctx context.Context, id uint) (result domain.GetProfileResponse, err error) {
 	segment := logger.StartSegment(ctx, "Usecase.Login")
 	defer segment.End()
 
 	// get user by id
-	data, err := u.repository.GetUserDetail(ctx, &id, nil)
+	user, err := u.repository.GetUserDetail(ctx, &id, nil)
 	if err != nil {
 		logger.PrintErrorLog(ctx, err, logger.GetErrorFileLine(), map[string]interface{}{
 			"id": id,
 		})
-		return data, err
+		return result, err
 	}
 
-	return data, nil
+	result = domain.GetProfileResponse{
+		ID:        user.ID,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
+		DeletedAt: user.DeletedAt,
+		Name:      user.Name,
+		Email:     user.Email,
+		IsPremium: user.IsPremium,
+		Profile:   user.Profile,
+	}
+
+	return result, nil
 }
 
 func (a *Usecase) CheckToken(ctx context.Context, token string) (uint, error) {

@@ -111,7 +111,7 @@ func TestUsecase_GetProfile(t *testing.T) {
 		name     string
 		fields   fields
 		args     args
-		want     domain.User
+		want     domain.GetProfileResponse
 		wantErr  bool
 		function func(args)
 	}{
@@ -124,13 +124,12 @@ func TestUsecase_GetProfile(t *testing.T) {
 				ctx: context.Background(),
 				id:  1,
 			},
-			want: domain.User{
+			want: domain.GetProfileResponse{
 				ID:        1,
 				CreatedAt: now,
 				UpdatedAt: now,
 				Name:      "a",
 				Email:     "a@a.com",
-				Password:  "a",
 				IsPremium: false,
 			},
 			wantErr: false,
@@ -155,7 +154,7 @@ func TestUsecase_GetProfile(t *testing.T) {
 				ctx: context.Background(),
 				id:  1,
 			},
-			want:    domain.User{},
+			want:    domain.GetProfileResponse{},
 			wantErr: true,
 			function: func(a args) {
 				mockRepository.EXPECT().GetUserDetail(a.ctx, &a.id, nil).Return(domain.User{}, errors.New(""))

@@ -9,7 +9,7 @@ import (
 	"github.com/fahmialfareza/deals-dating-app-backend/pkg/logger"
 )
 
-func (h *HTTPHandler) authMiddleware(ctx context.Context, authHeader string) (user domain.User, err error) {
+func (h *HTTPHandler) authMiddleware(ctx context.Context, authHeader string) (user domain.GetProfileResponse, err error) {
 	segment := logger.StartSegment(ctx, "HTTPHandler.authMiddleware")
 	defer segment.End()
 
