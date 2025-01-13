@@ -71,3 +71,4 @@ You can test with Postman to test the integration or integrate with Frontend or 
 - **Cache**: Use redis for some case. Still small using because of the short time of development.
 - **Logging**: Use new relic for logging.
 - **Object Storage**: Use object storage to save the image.
+- **Hystrix**: Use hystrix for circuit breaker.
