@@ -11,6 +11,7 @@ var (
 
 	RedisURL        string
 	RedisExpireTime time.Duration
+	RedisType       string
 
 	JWTSecret string
 

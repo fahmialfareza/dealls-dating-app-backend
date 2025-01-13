@@ -35,7 +35,7 @@ type RedisClusterClient struct {
 }
 
 func NewRedis(redisURL string) IRedis {
-	if environment.Environment == constant.ProductionEnvironment {
+	if environment.RedisType == constant.RedisTypeCluster {
 		redisClusterClient, err := openRedisCluster(redisURL)
 		if err != nil {
 			panic(err)

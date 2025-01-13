@@ -21,6 +21,7 @@ func LoadEnvironment(service string) error {
 	PostgresSetLimitsStr := os.Getenv("POSTGRES_SETLIMITS")
 	RedisURL = os.Getenv("REDIS_URL")
 	RedisExpireTimeStr := os.Getenv("REDIS_EXPIRE_TIME")
+	RedisType = os.Getenv("REDIS_TYPE")
 	RedisExpireTimeInt, err := strconv.Atoi(RedisExpireTimeStr)
 	if err != nil {
 		return err
